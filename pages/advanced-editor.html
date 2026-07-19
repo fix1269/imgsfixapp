@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Image Editor — imgsfix</title>
+  <meta name="description" content="A full-featured canvas editor with shapes, text, layers, presets, undo/redo, and project saving. Powered by Fabric.js, 100% in-browser.">
+  <link rel="stylesheet" href="../assets/cairo.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self'; worker-src 'self' blob:; wasm-unsafe-eval;">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">🎨 <span data-i18n="nav_editor">Editor</span></span>
+      <h1 data-i18n="nav_editor">Advanced Editor</h1>
+      <p data-i18n="editor_desc">A full-featured canvas editor with shapes, text, layers, presets, and undo/redo — all in your browser.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <span data-i18n="nav_editor">Editor</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <!-- toolbar -->
+      <div class="editor-toolbar">
+        <button class="btn btn-primary btn-sm" id="btnToolbarUpload" type="button" data-i18n="t_upload">Upload Image / رفع صورة</button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" data-action="undo" title="Undo (Ctrl+Z)" data-i18n="ed_undo">↶ Undo</button>
+        <button class="tool-btn" data-action="redo" title="Redo (Ctrl+Y)" data-i18n="ed_redo">↷ Redo</button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" data-action="duplicate" title="Duplicate (Ctrl+D)" data-i18n="ed_duplicate">⎘ Duplicate</button>
+        <button class="tool-btn" data-action="delete" title="Delete (Del)" data-i18n="ed_delete">✕ Delete</button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" data-action="bring-front" title="Bring to Front" data-i18n="ed_front">⬆ Front</button>
+        <button class="tool-btn" data-action="bring-forward" title="Bring Forward" data-i18n="ed_forward">↑ Forward</button>
+        <button class="tool-btn" data-action="send-backward" title="Send Backward" data-i18n="ed_backward">↓ Backward</button>
+        <button class="tool-btn" data-action="send-back" title="Send to Back" data-i18n="ed_back">⬇ Back</button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" data-action="export" title="Export PNG" data-i18n="ed_export">📥 Export</button>
+        <button class="tool-btn" data-action="save" title="Save Project (Ctrl+S)" data-i18n="ed_save">💾 Save</button>
+        <button class="tool-btn" data-action="clear" title="Clear Canvas" data-i18n="ed_clear">🗑 Clear</button>
+      </div>
+
+      <div class="editor-shell">
+        <!-- left sidebar -->
+        <aside class="tool-panel">
+          <div class="panel-section">
+            <h4 data-i18n="ed_presets">Presets</h4>
+            <div class="preset-grid">
+              <button class="preset-btn active" data-preset="ig_post">IG Post 1080²</button>
+              <button class="preset-btn" data-preset="ig_story">IG Story 1080×1920</button>
+              <button class="preset-btn" data-preset="yt_thumb">YT Thumb 1280×720</button>
+              <button class="preset-btn" data-preset="fb_post">FB Post 1200×630</button>
+              <button class="preset-btn" data-preset="custom">Custom 1920×1080</button>
+            </div>
+            <div class="custom-size-row">
+              <div class="custom-size-field">
+                <label class="custom-size-label" for="customW" data-i18n="ed_width">العرض</label>
+                <input type="number" id="customW" class="custom-size-input" value="1920" min="50" max="8000">
+              </div>
+              <div class="custom-size-field">
+                <label class="custom-size-label" for="customH" data-i18n="ed_height">الارتفاع</label>
+                <input type="number" id="customH" class="custom-size-input" value="1080" min="50" max="8000">
+              </div>
+              <button class="preset-btn custom-size-btn" id="btnCustomSize" type="button" data-i18n="ed_custom_size">مقاس مخصص</button>
+            </div>
+          </div>
+          <div class="panel-section">
+            <h4 data-i18n="ed_tools">Tools</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <button class="tool-btn active" data-tool="select" data-i18n="ed_select">✋ Select</button>
+              <button class="tool-btn" data-tool="brush" data-i18n="ed_brush">🖌 Brush</button>
+              <button class="tool-btn" data-tool="text" data-i18n="ed_text">T Text</button>
+              <button class="tool-btn" data-tool="rect" data-i18n="ed_rect">▭ Rect</button>
+              <button class="tool-btn" data-tool="circle" data-i18n="ed_circle">● Circle</button>
+              <button class="tool-btn" data-tool="triangle" data-i18n="ed_triangle">▲ Triangle</button>
+              <button class="tool-btn" data-tool="line" data-i18n="ed_line">— Line</button>
+              <button class="tool-btn" data-tool="arrow" data-i18n="ed_arrow">→ Arrow</button>
+            </div>
+          </div>
+          <div class="panel-section">
+            <h4 data-i18n="ed_brush_settings">Brush</h4>
+            <div class="setting-row">
+              <label data-i18n="ed_color">Color</label>
+              <input type="color" id="brushColor" class="color-input" value="#1a5fff">
+            </div>
+            <div class="setting-row">
+              <label><span data-i18n="ed_width_label">Width:</span> <span id="brushWidthVal">4</span>px</label>
+              <input type="range" id="brushWidth" class="range-input" min="1" max="50" value="4">
+            </div>
+          </div>
+          <div class="panel-section" id="propsPanel" style="opacity:0.5">
+            <h4 data-i18n="ed_properties">Properties</h4>
+            <div class="setting-row">
+              <label data-i18n="ed_fill">Fill</label>
+              <input type="color" id="propFill" class="color-input" value="#1a5fff">
+            </div>
+            <div class="setting-row">
+              <label><span data-i18n="ed_opacity_label">Opacity:</span> <span id="propOpacityVal">100</span>%</label>
+              <input type="range" id="propOpacity" class="range-input" min="0" max="100" value="100">
+            </div>
+            <div class="setting-row">
+              <label><span data-i18n="ed_rotation_label">Rotation:</span> <span id="propRotationVal">0</span>°</label>
+              <input type="range" id="propRotation" class="range-input" min="0" max="360" value="0">
+            </div>
+            <div id="textProps" class="hide">
+              <div class="setting-row">
+                <label data-i18n="ed_text_label">Text</label>
+                <input type="text" id="propText" class="num-input" value="">
+              </div>
+              <div class="setting-row">
+                <label><span data-i18n="ed_font_family_label">Font Family:</span></label>
+                <select id="propFontFamily" class="select-input">
+                  <option value="Cairo">Cairo</option>
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Verdana">Verdana</option>
+                  <option value="Tahoma">Tahoma</option>
+                  <option value="Trebuchet MS">Trebuchet MS</option>
+                  <option value="Impact">Impact</option>
+                  <option value="Comic Sans MS">Comic Sans MS</option>
+                </select>
+              </div>
+              <div class="setting-row">
+                <label><span data-i18n="ed_font_size_label">Font Size:</span> <span id="propFontSizeVal">40</span>px</label>
+                <input type="range" id="propFontSize" class="range-input" min="8" max="200" value="40">
+              </div>
+              <div class="setting-row" style="display:flex;gap:4px">
+                <button class="tool-btn" id="propBold" style="flex:1">B</button>
+                <button class="tool-btn" id="propItalic" style="flex:1">I</button>
+                <button class="tool-btn" id="propUnderline" style="flex:1">U</button>
+              </div>
+              <div class="setting-row">
+                <select id="propAlign" class="select-input">
+                  <option value="left" data-i18n="ed_align_left">Left</option>
+                  <option value="center" data-i18n="ed_align_center">Center</option>
+                  <option value="right" data-i18n="ed_align_right">Right</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- canvas -->
+        <div class="editor-canvas-wrap">
+          <canvas id="editorCanvas"></canvas>
+          <div class="editor-upload-zone" id="editorUploadZone">
+            <div class="es-icon">📁</div>
+            <p data-i18n="ed_drop">Drop an image here or click to browse</p>
+            <button class="btn btn-primary btn-sm" id="btnEditorUpload" type="button" data-i18n="t_upload">Upload Image / رفع صورة</button>
+            <input type="file" id="editorFileInput" accept="image/*" style="display:none">
+          </div>
+        </div>
+
+        <!-- right sidebar -->
+        <aside class="tool-panel editor-right">
+          <div class="panel-section">
+            <h4 data-i18n="ed_zoom">Zoom</h4>
+            <div style="display:flex;gap:4px">
+              <button class="tool-btn" id="btnZoomOut" style="flex:1" data-i18n="ed_zoom_out">−</button>
+              <button class="tool-btn" id="btnZoomFit" style="flex:1" data-i18n="ed_fit">Fit</button>
+              <button class="tool-btn" id="btnZoomIn" style="flex:1" data-i18n="ed_zoom_in">+</button>
+            </div>
+          </div>
+          <div class="panel-section">
+            <h4 data-i18n="ed_background">Background</h4>
+            <div class="setting-row">
+              <input type="color" id="bgColor" class="color-input" value="#ffffff">
+            </div>
+          </div>
+          <div class="panel-section">
+            <h4 data-i18n="ed_layers">Layers</h4>
+            <div class="layer-list" id="layerList">
+              <p style="font-size:13px;color:var(--text-faint);text-align:center;padding:16px" data-i18n="ed_no_layers">No layers yet</p>
+            </div>
+          </div>
+          <div class="panel-section">
+            <h4 data-i18n="ed_shortcuts">Shortcuts</h4>
+            <ul style="font-size:12px;color:var(--text-muted);line-height:1.8">
+              <li data-i18n="ed_sc_del"><kbd>Del</kbd> Delete object</li>
+              <li data-i18n="ed_sc_undo"><kbd>Ctrl</kbd>+<kbd>Z</kbd> Undo</li>
+              <li data-i18n="ed_sc_redo"><kbd>Ctrl</kbd>+<kbd>Y</kbd> Redo</li>
+              <li data-i18n="ed_sc_dup"><kbd>Ctrl</kbd>+<kbd>D</kbd> Duplicate</li>
+              <li data-i18n="ed_sc_save"><kbd>Ctrl</kbd>+<kbd>S</kbd> Save project</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <script src="../assets/fabric.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/editor.js"></script>
+</body>
+</html>

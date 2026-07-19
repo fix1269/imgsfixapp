@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove Background — imgsfix</title>
+  <meta name="description" content="Erase image backgrounds with color sampling and tolerance. 100% local browser processing.">
+  <link rel="stylesheet" href="../../assets/cairo.css">
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .preview-wrap{position:relative;width:100%;max-width:720px;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--border-soft);background:var(--bg-subtle);}
+    .preview-wrap canvas{display:block;width:100%;cursor:default;}
+    #srcCanvas{cursor:crosshair;}
+    #resultCanvas{background-image:
+      linear-gradient(45deg,#ccc 25%,transparent 25%),
+      linear-gradient(-45deg,#ccc 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#ccc 75%),
+      linear-gradient(-45deg,transparent 75%,#ccc 75%);
+      background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;}
+    .color-preview{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-top:8px;}
+    .color-swatch{width:24px;height:24px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:#fff;}
+    .instruction{font-size:12px;color:var(--text-faint);margin-top:8px;line-height:1.5;}
+  </style>
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">🪄 <span data-i18n="t_removebg_t">Remove BG</span></span>
+      <h1 data-i18n="t_removebg_t">Remove BG</h1>
+      <p data-i18n="t_removebg_d">Erase backgrounds with color sampling.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <a href="../../index.html#tools" data-i18n="nav_tools">Tools</a><span class="sep">/</span>
+        <span data-i18n="t_removebg_t">Remove BG</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container tool-shell">
+      <aside class="tool-panel">
+        <div class="panel-section">
+          <h4 data-i18n="tc_removebg_settings">Remove BG Settings</h4>
+          <div class="setting-row">
+            <label><span data-i18n="tc_tolerance">Tolerance:</span> <span id="tolVal">30</span></label>
+            <input type="range" id="tolerance" class="range-input" min="0" max="100" value="30">
+          </div>
+          <div class="setting-row">
+            <label data-i18n="tc_output_bg">Output Background</label>
+            <select id="outputMode" class="select-input">
+              <option value="transparent" data-i18n="tc_transparent">Transparent</option>
+              <option value="white" data-i18n="tc_white">White</option>
+              <option value="custom" data-i18n="tc_custom_color">Custom Color</option>
+            </select>
+          </div>
+          <div class="setting-row" id="customColorRow" style="display:none">
+            <label data-i18n="tc_custom_color">Custom Color</label>
+            <input type="color" id="customColor" class="color-input" value="#00aaff">
+          </div>
+          <p class="instruction" data-i18n="tc_removebg_instruction">Click on the source image to sample the background color, then press Apply.</p>
+          <div class="color-preview">
+            <span class="color-swatch" id="colorSwatch"></span>
+            <span id="colorText" data-i18n="tc_no_color">No color sampled</span>
+          </div>
+          <button class="btn btn-primary btn-block" id="btnApply" style="margin-top:8px" data-i18n="tc_apply">Apply</button>
+        </div>
+      </aside>
+
+      <div class="tool-stage" id="toolStage">
+        <div class="tool-stage-header">
+          <h3 data-i18n="t_removebg_t">Remove BG</h3>
+          <div class="result-actions" id="resultActions" style="display:none">
+            <button class="btn btn-primary btn-sm" id="btnDownload" data-i18n="tc_download">Download</button>
+            <button class="btn btn-secondary btn-sm" id="btnClear" data-i18n="tc_clear">Clear</button>
+            <button class="btn btn-secondary btn-sm" id="btnReset" data-i18n="tc_reset">Reset</button>
+          </div>
+        </div>
+        <div class="tool-stage-body">
+          <div class="empty-state" id="emptyState">
+            <div class="es-icon"></div>
+            <p data-i18n="tc_drop">Drop your image here or click to browse</p>
+            <p style="font-size:12px;color:var(--text-faint)" data-i18n="tc_supported">JPG · PNG · WebP · GIF · BMP</p>
+            <button class="btn btn-primary btn-sm" id="btnUpload" data-i18n="t_upload">رفع صورة</button>
+          </div>
+          <div class="preview-wrap hide" id="previewWrap">
+            <canvas id="srcCanvas"></canvas>
+            <canvas id="resultCanvas" style="display:none"></canvas>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hide">
+          <div class="drop-zone hide" id="dropZone" style="margin-top:16px">
+            <span class="dz-icon"></span>
+            <span data-i18n="tc_drop">Drop your image here or click to browse</span>
+          </div>
+          <div class="progress hide" id="progress" style="max-width:400px">
+            <div class="progress-bar"></div>
+            <div class="progress-text" id="progressText"></div>
+          </div>
+          <div id="infoBar" style="font-size:13px;color:var(--text-faint)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/main.js"></script>
+  <script>
+  (function(){
+    'use strict';
+    var I=window.imgsfix,$=I.$,t=I.t,toast=I.toast;
+
+    /* ----- upload SVG ----- */
+    var uploadIcon=window.imgsfixUploadIcon||
+      '<svg class="ic-upload" viewBox="0 0 24 24" width="48" height="48" fill="none" '+
+      'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" '+
+      'stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/>'+
+      '<path d="M7 9l5-5 5 5"/><path d="M5 20h14"/></svg>';
+
+    /* ----- DOM ----- */
+    var tolerance=$('#tolerance'),tolVal=$('#tolVal');
+    var outputMode=$('#outputMode'),customColorRow=$('#customColorRow'),customColor=$('#customColor');
+    var colorSwatch=$('#colorSwatch'),colorText=$('#colorText');
+    var btnApply=$('#btnApply'),btnDownload=$('#btnDownload'),btnReset=$('#btnReset'),btnClear=$('#btnClear'),btnUpload=$('#btnUpload');
+    var emptyState=$('#emptyState'),dropZone=$('#dropZone'),previewWrap=$('#previewWrap');
+    var srcCanvas=$('#srcCanvas'),resultCanvas=$('#resultCanvas');
+    var fileInput=$('#fileInput'),progress=$('#progress'),progressText=$('#progressText');
+    var resultActions=$('#resultActions'),infoBar=$('#infoBar');
+
+    /* inject upload icon */
+    var esIcon=$('.es-icon',emptyState),dzIcon=$('.dz-icon',dropZone);
+    if(esIcon)esIcon.innerHTML=uploadIcon;
+    if(dzIcon)dzIcon.innerHTML=uploadIcon;
+
+    /* ----- state ----- */
+    var originalImage=null;
+    var objectURL=null;
+    var sampledColor=null;       /* {r,g,b} */
+    var currentFileName='image.png';
+
+    /* ----- helpers ----- */
+    function formatSize(bytes){
+      if(bytes<1024)return bytes+'B';
+      if(bytes<1048576)return(bytes/1024).toFixed(1)+'KB';
+      return(bytes/1048576).toFixed(2)+'MB';
+    }
+    function showProgress(pct,label){
+      var bar=$('.progress-bar',progress);
+      if(bar)bar.style.width=pct+'%';
+      if(progressText)progressText.textContent=label;
+    }
+    function validateFile(file){
+      if(!file)return false;
+      if(!file.type.startsWith('image/')){toast(t('tc_supported')+' only','err');return false;}
+      if(file.size>50*1024*1024){toast('File too large (max 50MB)','err');return false;}
+      return true;
+    }
+    function toHex(n){var h=n.toString(16);return h.length<2?'0'+h:h;}
+    function rgbToHex(r,g,b){return '#'+toHex(r)+toHex(g)+toHex(b);}
+
+    /* ----- RULE 2: wipe metadata before a fresh load ----- */
+    function wipeMetadata(){
+      sampledColor=null;
+      if(colorSwatch)colorSwatch.style.background='#fff';
+      if(colorText)colorText.textContent='No color sampled';
+      /* reset result canvas: hide it, show source */
+      if(resultCanvas){
+        var rctx=resultCanvas.getContext('2d');
+        rctx.clearRect(0,0,resultCanvas.width,resultCanvas.height);
+        resultCanvas.width=0;resultCanvas.height=0;
+        resultCanvas.style.display='none';
+      }
+      if(srcCanvas)srcCanvas.style.display='block';
+    }
+
+    /* ----- RULE 1: load file ----- */
+    function loadFile(file){
+      if(!validateFile(file))return;
+      wipeMetadata();
+      if(objectURL){try{URL.revokeObjectURL(objectURL);}catch(e){}objectURL=null;}
+
+      currentFileName=file.name||'image.png';
+      objectURL=URL.createObjectURL(file);
+
+      var img=new Image();
+      img.onload=function(){
+        originalImage=img;
+        /* hide empty state + drop zone, show preview wrap + actions */
+        emptyState.classList.add('hide');
+        dropZone.classList.add('hide');
+        previewWrap.classList.remove('hide');
+        resultActions.classList.remove('hide');
+        resultActions.style.display='';
+        if(progress)progress.classList.add('hide');
+
+        /* draw source canvas */
+        var sctx=srcCanvas.getContext('2d');
+        srcCanvas.width=img.width;srcCanvas.height=img.height;
+        sctx.clearRect(0,0,srcCanvas.width,srcCanvas.height);
+        sctx.drawImage(img,0,0);
+        srcCanvas.style.display='block';
+        resultCanvas.style.display='none';
+
+        if(infoBar)infoBar.textContent=img.width+' × '+img.height+'px · '+formatSize(file.size);
+      };
+      img.onerror=function(){toast('Failed to load image','err');clearAll();};
+      img.src=objectURL;
+    }
+
+    /* ----- RULE 3: reset (restore defaults, keep image) ----- */
+    function resetState(){
+      tolerance.value=30;tolVal.textContent=30;
+      outputMode.value='transparent';
+      customColorRow.style.display='none';
+      customColor.value='#00aaff';
+      /* clear sampled color + result canvas, show source again */
+      wipeMetadata();
+      if(originalImage){
+        var sctx=srcCanvas.getContext('2d');
+        sctx.clearRect(0,0,srcCanvas.width,srcCanvas.height);
+        sctx.drawImage(originalImage,0,0);
+        srcCanvas.style.display='block';
+      }
+      toast(t('tc_reset'),'ok');
+    }
+
+    /* ----- RULE 3: clear (HARD RESET) ----- */
+    function clearAll(){
+      if(objectURL){try{URL.revokeObjectURL(objectURL);}catch(e){}objectURL=null;}
+      originalImage=null;sampledColor=null;currentFileName='image.png';
+
+      var sctx=srcCanvas.getContext('2d');
+      sctx.clearRect(0,0,srcCanvas.width,srcCanvas.height);
+      srcCanvas.width=0;srcCanvas.height=0;srcCanvas.style.display='block';
+      var rctx=resultCanvas.getContext('2d');
+      rctx.clearRect(0,0,resultCanvas.width,resultCanvas.height);
+      resultCanvas.width=0;resultCanvas.height=0;resultCanvas.style.display='none';
+
+      previewWrap.classList.add('hide');
+      if(progress)progress.classList.add('hide');
+      resultActions.classList.add('hide');resultActions.style.display='none';
+      dropZone.classList.add('hide');
+      emptyState.classList.remove('hide');
+      if(infoBar)infoBar.textContent='';
+
+      if(colorSwatch)colorSwatch.style.background='#fff';
+      if(colorText)colorText.textContent='No color sampled';
+
+      tolerance.value=30;tolVal.textContent=30;
+      outputMode.value='transparent';
+      customColorRow.style.display='none';
+      customColor.value='#00aaff';
+      if(fileInput)fileInput.value='';
+    }
+
+    /* ----- click on source canvas to sample a pixel ----- */
+    srcCanvas.addEventListener('click',function(e){
+      if(!originalImage)return;
+      var rect=srcCanvas.getBoundingClientRect();
+      var sx=srcCanvas.width/rect.width;
+      var sy=srcCanvas.height/rect.height;
+      var x=Math.floor((e.clientX-rect.left)*sx);
+      var y=Math.floor((e.clientY-rect.top)*sy);
+      x=Math.max(0,Math.min(srcCanvas.width-1,x));
+      y=Math.max(0,Math.min(srcCanvas.height-1,y));
+      var sctx=srcCanvas.getContext('2d');
+      var px=sctx.getImageData(x,y,1,1).data;
+      sampledColor={r:px[0],g:px[1],b:px[2]};
+      var hex=rgbToHex(px[0],px[1],px[2]);
+      if(colorSwatch)colorSwatch.style.background=hex;
+      if(colorText)colorText.textContent='Sampled: '+hex.toUpperCase();
+      toast('Color sampled','ok');
+    });
+
+    /* ----- output mode toggle ----- */
+    outputMode.addEventListener('change',function(){
+      customColorRow.style.display=outputMode.value==='custom'?'block':'none';
+    });
+    tolerance.addEventListener('input',function(){tolVal.textContent=tolerance.value;});
+
+    /* ----- apply: per-pixel color distance removal ----- */
+    btnApply.addEventListener('click',function(){
+      if(!originalImage){toast('Load an image first','err');return;}
+      if(!sampledColor){toast('Click the image to sample the background color','err');return;}
+      if(progress)progress.classList.remove('hide');
+      showProgress(0,t('tc_processing'));
+
+      var w=srcCanvas.width,h=srcCanvas.height;
+      var sctx=srcCanvas.getContext('2d');
+      var srcData=sctx.getImageData(0,0,w,h);
+      var sd=srcData.data;
+
+      var rctx=resultCanvas.getContext('2d');
+      resultCanvas.width=w;resultCanvas.height=h;
+      var out=rctx.createImageData(w,h);
+      var od=out.data;
+
+      var sr=sampledColor.r,sg=sampledColor.g,sb=sampledColor.b;
+      var tol=+tolerance.value;
+      /* tolerance 0..100 → distance threshold 0..~441 (max RGB distance) */
+      var threshold=tol/100*Math.sqrt(255*255*3);
+      var threshold2=threshold*threshold;
+
+      var mode=outputMode.value;
+      var bgR=255,bgG=255,bgB=255;
+      if(mode==='custom'){
+        var hex=customColor.value;
+        bgR=parseInt(hex.substr(1,2),16);
+        bgG=parseInt(hex.substr(3,2),16);
+        bgB=parseInt(hex.substr(5,2),16);
+      }
+
+      for(var i=0;i<sd.length;i+=4){
+        var dr=sd[i]-sr,dg=sd[i+1]-sg,db=sd[i+2]-sb;
+        var dist2=dr*dr+dg*dg+db*db;
+        if(dist2<=threshold2){
+          if(mode==='transparent'){
+            od[i]=0;od[i+1]=0;od[i+2]=0;od[i+3]=0;
+          }else{
+            od[i]=bgR;od[i+1]=bgG;od[i+2]=bgB;od[i+3]=255;
+          }
+        }else{
+          od[i]=sd[i];od[i+1]=sd[i+1];od[i+2]=sd[i+2];od[i+3]=sd[i+3];
+        }
+      }
+      rctx.putImageData(out,0,0);
+
+      /* show result canvas, hide source */
+      srcCanvas.style.display='none';
+      resultCanvas.style.display='block';
+
+      showProgress(100,t('tc_done'));
+      setTimeout(function(){if(progress)progress.classList.add('hide');},800);
+      toast(t('tc_done'),'ok');
+    });
+
+    /* ----- download via toBlob PNG ----- */
+    btnDownload.addEventListener('click',function(){
+      if(!originalImage){toast('Load an image first','err');return;}
+      /* prefer the result canvas if it has content, else the source canvas */
+      var canvas=resultCanvas.width>0?resultCanvas:srcCanvas;
+      if(!canvas||canvas.width===0){toast('Nothing to download','err');return;}
+      canvas.toBlob(function(blob){
+        if(!blob){toast('Export failed','err');return;}
+        var url=URL.createObjectURL(blob);
+        var a=document.createElement('a');
+        a.href=url;
+        a.download=currentFileName.replace(/\.[^.]+$/,'')+'_nobg_imgsfix.png';
+        a.click();
+        setTimeout(function(){URL.revokeObjectURL(url);},1000);
+        toast(t('tc_done'),'ok');
+      },'image/png');
+    });
+
+    btnReset.addEventListener('click',resetState);
+    btnClear.addEventListener('click',clearAll);
+
+    /* ----- upload entry points ----- */
+    if(emptyState){
+      emptyState.addEventListener('click',function(){fileInput.click();});
+      emptyState.addEventListener('dragover',function(e){e.preventDefault();emptyState.classList.add('drag');});
+      emptyState.addEventListener('dragleave',function(){emptyState.classList.remove('drag');});
+      emptyState.addEventListener('drop',function(e){e.preventDefault();emptyState.classList.remove('drag');if(e.dataTransfer.files&&e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
+    }
+    if(dropZone){
+      dropZone.addEventListener('click',function(){fileInput.click();});
+      dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('drag');});
+      dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('drag');});
+      dropZone.addEventListener('drop',function(e){e.preventDefault();dropZone.classList.remove('drag');if(e.dataTransfer.files&&e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);});
+    }
+    if(btnUpload)btnUpload.addEventListener('click',function(){fileInput.click();});
+    fileInput.addEventListener('change',function(e){if(e.target.files&&e.target.files[0])loadFile(e.target.files[0]);});
+    document.addEventListener('paste',function(e){if(e.clipboardData&&e.clipboardData.files&&e.clipboardData.files[0])loadFile(e.clipboardData.files[0]);});
+  })();
+  </script>
+</body>
+</html>

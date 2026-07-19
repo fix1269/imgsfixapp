@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Image — imgsfix</title>
+  <meta name="description" content="Crop and frame your image precisely with aspect ratio presets. 100% local browser processing.">
+  <link rel="stylesheet" href="../../assets/cairo.css">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">✂ <span data-i18n="t_crop_t">Crop</span></span>
+      <h1 data-i18n="t_crop_t">Crop</h1>
+      <p data-i18n="t_crop_d">Trim and frame your image precisely.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <a href="../../index.html#tools" data-i18n="nav_tools">Tools</a><span class="sep">/</span>
+        <span data-i18n="t_crop_t">Crop</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container tool-shell">
+      <aside class="tool-panel">
+        <div class="panel-section">
+          <h4 data-i18n="tc_crop_settings">Crop Settings</h4>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:var(--s-3)">
+            <button class="btn btn-secondary btn-sm" id="arFree" data-i18n="tc_free">Free</button>
+            <button class="btn btn-secondary btn-sm" id="ar1">1:1</button>
+            <button class="btn btn-secondary btn-sm" id="ar2">4:3</button>
+            <button class="btn btn-secondary btn-sm" id="ar3">3:2</button>
+            <button class="btn btn-secondary btn-sm" id="ar4">16:9</button>
+            <button class="btn btn-secondary btn-sm" id="ar5">9:16</button>
+          </div>
+          <div id="cropInfo" style="font-size:13px;color:var(--text-muted);text-align:center;margin-bottom:var(--s-3);min-height:20px"></div>
+          <button class="btn btn-primary btn-block" id="btnApply" style="margin-top:8px" disabled data-i18n="tc_apply">Apply</button>
+        </div>
+      </aside>
+
+      <div class="tool-stage" id="toolStage">
+        <div class="tool-stage-header">
+          <h3 data-i18n="t_crop_t">Crop</h3>
+          <div class="result-actions" id="resultActions" style="display:none">
+            <button class="btn btn-primary btn-sm" id="btnDownload" data-i18n="tc_download">Download</button>
+            <button class="btn btn-secondary btn-sm" id="btnClear" data-i18n="tc_clear">Clear</button>
+            <button class="btn btn-secondary btn-sm" id="btnReset" data-i18n="tc_reset">Reset</button>
+          </div>
+        </div>
+        <div class="tool-stage-body">
+          <div class="empty-state" id="emptyState">
+            <div class="es-icon">✂</div>
+            <p data-i18n="tc_drop">Drop your image here or click to browse</p>
+            <p style="font-size:12px;color:var(--text-faint)" data-i18n="tc_supported">JPG · PNG · WebP · GIF · BMP</p>
+            <button class="btn btn-primary btn-sm" id="btnUpload" data-i18n="t_upload">رفع صورة</button>
+          </div>
+          <div class="ba-wrap hide" id="baWrap">
+            <canvas id="beforeCanvas"></canvas>
+            <div class="ba-clip" style="width:50%">
+              <canvas id="afterCanvas"></canvas>
+            </div>
+            <div class="ba-slider" style="left:50%"></div>
+            <div class="ba-handle">⇆</div>
+            <span class="ba-label ba-label-before" data-i18n="tc_original">Before</span>
+            <span class="ba-label ba-label-after" data-i18n="tc_result">After</span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hide">
+          <div class="drop-zone hide" id="dropZone" style="margin-top:16px">
+            <span class="dz-icon">📁</span>
+            <span data-i18n="tc_drop">Drop your image here or click to browse</span>
+          </div>
+          <div class="progress hide" id="progress" style="max-width:400px">
+            <div class="progress-bar"></div>
+            <div class="progress-text" id="progressText"></div>
+          </div>
+          <div id="infoBar" style="font-size:13px;color:var(--text-faint)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/main.js"></script>
+  <script src="../../js/tool-core.js"></script>
+  <script>
+  (function(){
+    var arButtons=Array.prototype.slice.call(document.querySelectorAll('[id^="ar"]'));
+    var cropInfo=document.getElementById('cropInfo');
+    var applyBtn=document.getElementById('btnApply');
+    var btnUpload=document.getElementById('btnUpload');
+    var selectedAr='arFree';
+
+    var arValues={
+      arFree:null,
+      ar1:1,
+      ar2:4/3,
+      ar3:3/2,
+      ar4:16/9,
+      ar5:9/16
+    };
+
+    function resetCrop(){
+      selectedAr='arFree';
+      arButtons.forEach(function(b){
+        b.classList.remove('btn-primary');
+        b.classList.add('btn-secondary');
+      });
+      var freeBtn=document.getElementById('arFree');
+      if(freeBtn){freeBtn.classList.remove('btn-secondary');freeBtn.classList.add('btn-primary');}
+      cropInfo.textContent='';
+      applyBtn.disabled=true;
+    }
+
+    function setActiveAr(btn){
+      arButtons.forEach(function(b){
+        b.classList.remove('btn-primary');
+        b.classList.add('btn-secondary');
+      });
+      btn.classList.remove('btn-secondary');
+      btn.classList.add('btn-primary');
+    }
+
+    function updateCropInfo(){
+      var orig=tool.getOriginal();
+      if(!orig){cropInfo.textContent='';return;}
+      var ar=arValues[selectedAr];
+      var label=selectedAr==='arFree'?'Free':selectedAr.replace('ar','');
+      if(label!=='Free'){
+        var parts={'ar1':'1:1','ar2':'4:3','ar3':'3:2','ar4':'16:9','ar5':'9:16'};
+        label=parts[selectedAr]||label;
+      }
+      if(ar===null){
+        cropInfo.textContent=label+' — '+orig.width+' × '+orig.height;
+      }else{
+        var w=orig.width,h=orig.height,cw,ch;
+        if(w/h>ar){ch=h;cw=Math.round(h*ar);}else{cw=w;ch=Math.round(w/ar);}
+        cropInfo.textContent=label+' — '+cw+' × '+ch;
+      }
+    }
+
+    var tool=initTool({
+      autoProcess:false,
+      onReset:function(){resetCrop();},
+      onClear:function(){resetCrop();}
+    });
+
+    /* AR listeners */
+    arButtons.forEach(function(btn){
+      btn.addEventListener('click',function(){
+        selectedAr=btn.id;
+        setActiveAr(btn);
+        updateCropInfo();
+      });
+    });
+
+    /* MutationObserver enables btnApply when cropInfo has content */
+    var observer=new MutationObserver(function(){
+      applyBtn.disabled=!cropInfo.textContent;
+    });
+    observer.observe(cropInfo,{childList:true,characterData:true,subtree:true});
+
+    if(btnUpload)btnUpload.addEventListener('click',function(){
+      document.getElementById('fileInput').click();
+    });
+
+    /* apply centered crop */
+    applyBtn.addEventListener('click',function(){
+      var orig=tool.getOriginal(); if(!orig)return;
+      var ac=tool.getAfterCanvas(),actx=ac.getContext('2d');
+      var w=orig.width,h=orig.height;
+      var ar=arValues[selectedAr];
+      var cw,ch;
+      if(ar===null){
+        cw=w;ch=h;
+      }else{
+        if(w/h>ar){ch=h;cw=Math.round(h*ar);}else{cw=w;ch=Math.round(w/ar);}
+      }
+      var cx=Math.round((w-cw)/2);
+      var cy=Math.round((h-ch)/2);
+      ac.width=cw; ac.height=ch;
+      actx.clearRect(0,0,cw,ch);
+      actx.drawImage(orig,cx,cy,cw,ch,0,0,cw,ch);
+      imgsfix.toast(imgsfix.t('tc_done'),'ok');
+    });
+  })();
+  </script>
+</body>
+</html>

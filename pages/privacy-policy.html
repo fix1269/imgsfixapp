@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — imgsfix</title>
+  <meta name="description" content="imgsfix privacy policy: no data collection, no tracking cookies, no servers, no analytics. All image processing happens client-side in your browser.">
+  <link rel="stylesheet" href="../assets/cairo.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">🔒 <span data-i18n="page_privacy">Privacy Policy</span></span>
+      <h1 data-i18n="page_privacy">Privacy Policy</h1>
+      <p data-i18n="privacy_intro">Your privacy is not a feature — it is the foundation. This policy explains exactly what imgsfix does and does not do with your data.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <span data-i18n="page_privacy">Privacy Policy</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="prose">
+        <p><em data-i18n="privacy_last_updated">Last updated: July 2026</em></p>
+
+        <div style="background:rgba(16,185,129,.08);border:1px solid var(--c-success-500);border-radius:var(--r-md);padding:var(--s-4);margin:var(--s-5) 0">
+          <strong style="color:var(--c-success-600)" data-i18n="privacy_short_label">The short version:</strong> <span data-i18n="privacy_short_text">imgsfix does not collect, store, or transmit your data. There are no servers processing your images, no analytics tracking your behavior, no advertising cookies following you, and no accounts required. Everything happens in your browser. This is not a promise — it is a consequence of how the site is built.</span>
+        </div>
+
+        <h2 data-i18n="privacy_h2_1">1. Overview</h2>
+        <p data-i18n="privacy_p1_1">imgsfix is a privacy-first, client-side image toolkit. "Client-side" means that all processing — compression, resizing, conversion, cropping, background removal, cartoonization, enhancement, filters, QR scanning, and editing — takes place entirely within your web browser on your own device. No component of your image, your filename, or your editing activity is ever sent to us or to any third party.</p>
+        <p data-i18n="privacy_p1_2">This privacy policy describes in detail how imgsfix handles (or, more precisely, does not handle) your information. Because the service is designed around the principle of data minimization, most of this document explains what we do <em>not</em> do.</p>
+
+        <h2 data-i18n="privacy_h2_2">2. No Data Collection</h2>
+        <p data-i18n="privacy_p2_1">We do not collect any personal data. Specifically, we do not collect:</p>
+        <ul>
+          <li data-i18n="privacy_p2_l1">Your name, email address, or any other identifying information (no accounts are required).</li>
+          <li data-i18n="privacy_p2_l2">Your IP address or geographic location.</li>
+          <li data-i18n="privacy_p2_l3">The images you process — they never leave your browser.</li>
+          <li data-i18n="privacy_p2_l4">The filenames of your images.</li>
+          <li data-i18n="privacy_p2_l5">Your editing choices, tool usage, or browsing behavior on the site.</li>
+          <li data-i18n="privacy_p2_l6">Device information, browser version, or screen resolution.</li>
+        </ul>
+        <p data-i18n="privacy_p2_2">Because there is no server backend that receives or stores user data, there is no database that could be breached, sold, or subpoenaed. We cannot share what we do not have.</p>
+
+        <h2 data-i18n="privacy_h2_3">3. No Cookies</h2>
+        <p data-i18n="privacy_p3_1">imgsfix does not use tracking cookies. We do not set first-party cookies for analytics, advertising, session management, or any other purpose. We do not use third-party cookies.</p>
+        <p data-i18n="privacy_p3_2">The only storage we use is the browser's <code>localStorage</code> API, which is not a cookie and is described in detail in section 5 below. For complete information, please see our separate Cookie Policy.</p>
+
+        <h2 data-i18n="privacy_h2_4">4. No Servers &amp; Client-Side Processing</h2>
+        <p data-i18n="privacy_p4_1">imgsfix has no application server that receives or processes your files. When you use any tool, the following happens:</p>
+        <ul>
+          <li data-i18n="privacy_p4_l1">You select or drop a file, which your browser reads into local memory using the File API.</li>
+          <li data-i18n="privacy_p4_l2">The image is drawn onto an HTML5 <code>&lt;canvas&gt;</code> element.</li>
+          <li data-i18n="privacy_p4_l3">JavaScript running on your device manipulates the pixel data.</li>
+          <li data-i18n="privacy_p4_l4">The result is exported from the canvas to a downloadable file, generated entirely in your browser.</li>
+        </ul>
+        <p data-i18n="privacy_p4_2">At no point is the file transmitted over the network. If you close the browser tab, the in-memory image is discarded. The only copy that persists is the one you choose to download and save on your own device.</p>
+
+        <h2 data-i18n="privacy_h2_5">5. localStorage Usage</h2>
+        <p data-i18n="privacy_p5_1">imgsfix uses the browser's <code>localStorage</code> API to remember two small preferences:</p>
+        <ul>
+          <li data-i18n="privacy_p5_l1"><strong>Theme preference</strong> (<code>imgsfix_theme</code>) — stores whether you prefer light or dark mode.</li>
+          <li data-i18n="privacy_p5_l2"><strong>Language preference</strong> (<code>imgsfix_lang</code>) — stores whether you have selected English or Arabic.</li>
+        </ul>
+        <p data-i18n="privacy_p5_2">These values are stored on your device only. They are never transmitted to us or to any third party. They contain no personal information — just a short string indicating your preference. You can clear them at any time by clearing your browser's site data or localStorage. See our Cookie Policy for instructions on how to do this.</p>
+
+        <h2 data-i18n="privacy_h2_6">6. No Analytics &amp; No Third-Party Tracking</h2>
+        <p data-i18n="privacy_p6_1">imgsfix does not use any analytics service. We do not embed Google Analytics, Matomo, Mixpanel, Amplitude, or any other measurement tool. We do not know how many people visit the site, which tools they use, or how long they stay.</p>
+        <p data-i18n="privacy_p6_2">We also do not use advertising networks, marketing pixels, social media embeds, or any third-party script that could track your behavior. There are no "share" buttons that leak data to social platforms, and no comment systems that profile visitors.</p>
+        <p data-i18n="privacy_p6_3">The only external resource the site loads is the Cairo font stylesheet from Google Fonts (see section 7).</p>
+
+        <h2 data-i18n="privacy_h2_7">7. Third-Party Services</h2>
+        <p data-i18n="privacy_p7_1">The only third-party service imgsfix interacts with is <strong>Google Fonts</strong>. The site loads the Cairo typeface from <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code> to provide consistent typography. Google's servers may receive a request for the font file and may log standard HTTP information (such as IP address) as part of that request, in accordance with Google's own privacy policy.</p>
+        <p data-i18n="privacy_p7_2">If you prefer not to load any external resources, your browser can be configured to block third-party font requests. imgsfix will fall back to your system's default fonts and continue to function normally. No functionality is lost — only the typography changes.</p>
+        <p data-i18n="privacy_p7_3">Aside from Google Fonts, imgsfix loads the Fabric.js library from a CDN (cdnjs) for the advanced editor. This is a static JavaScript file and does not involve any tracking.</p>
+
+        <h2 data-i18n="privacy_h2_8">8. Your Rights</h2>
+        <p data-i18n="privacy_p8_1">Because imgsfix does not collect or store any personal data, traditional data-subject rights (such as access, correction, deletion, or portability of your data) are effectively already fulfilled — there is no data about you for us to provide, correct, or delete. However, you retain full control over the following:</p>
+        <ul>
+          <li data-i18n="privacy_p8_l1"><strong>Local preferences:</strong> You can clear your theme and language preferences at any time through your browser settings.</li>
+          <li data-i18n="privacy_p8_l2"><strong>Your images:</strong> You decide which images to process and whether to download the results. Nothing is retained by the site.</li>
+          <li data-i18n="privacy_p8_l3"><strong>External resources:</strong> You can block Google Fonts or other external resources using browser extensions or content blockers without affecting core functionality.</li>
+          <li data-i18n="privacy_p8_l4"><strong>Use of the service:</strong> You may stop using imgsfix at any time. Because no account or data exists, there is nothing to cancel or delete.</li>
+        </ul>
+
+        <h2 data-i18n="privacy_h2_9">9. Children's Privacy</h2>
+        <p data-i18n="privacy_p9_1">imgsfix is suitable for users of all ages. Because we collect no personal information and require no account, the service is safe for children to use under adult supervision. We do not knowingly collect any information from children or any other user, and there is no mechanism by which a child could disclose personal data to us through the site.</p>
+
+        <h2 data-i18n="privacy_h2_10">10. Changes to This Policy</h2>
+        <p data-i18n="privacy_p10_1">If we make material changes to this privacy policy, we will update the "last updated" date at the top of this page. Because the core architecture of imgsfix — client-side processing with no data collection — is fundamental to the project, we do not anticipate changes that would alter this approach. Any future changes would be transparently documented here.</p>
+
+        <h2 data-i18n="privacy_h2_11">11. Contact Information</h2>
+        <p data-i18n="privacy_p11_1">If you have any questions about this privacy policy or imgsfix's data practices, please visit our contact page. You can also find quick answers to common privacy questions in our FAQ, and more details about local storage in our Cookie Policy.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

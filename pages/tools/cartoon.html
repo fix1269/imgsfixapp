@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartoonize Image — imgsfix</title>
+  <meta name="description" content="Turn your photos into cartoon-style art with edge detection and color posterization. 100% local browser processing.">
+  <link rel="stylesheet" href="../../assets/cairo.css">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">🎭 <span data-i18n="t_cartoon_t">Cartoonize</span></span>
+      <h1 data-i18n="t_cartoon_t">Cartoonize</h1>
+      <p data-i18n="t_cartoon_d">Turn photos into cartoon-style art.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <a href="../../index.html#tools" data-i18n="nav_tools">Tools</a><span class="sep">/</span>
+        <span data-i18n="t_cartoon_t">Cartoonize</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container tool-shell">
+      <aside class="tool-panel">
+        <div class="panel-section">
+          <h4 data-i18n="tc_cartoon_settings">Cartoon Settings</h4>
+          <div class="setting-row">
+            <label><span data-i18n="tc_edge_intensity">Edge Intensity:</span> <span id="edgeVal">40</span></label>
+            <input type="range" id="edge" class="range-input" min="0" max="100" value="40">
+          </div>
+          <div class="setting-row">
+            <label><span data-i18n="tc_color_levels">Color Levels:</span> <span id="lvlVal">6</span></label>
+            <input type="range" id="levels" class="range-input" min="2" max="16" value="6">
+          </div>
+          <div class="setting-row">
+            <label><span data-i18n="tc_smoothness">Smoothness:</span> <span id="smVal">3</span></label>
+            <input type="range" id="smooth" class="range-input" min="0" max="8" value="3">
+          </div>
+          <button class="btn btn-primary btn-block" id="btnApply" style="margin-top:8px" data-i18n="tc_apply">Apply</button>
+        </div>
+      </aside>
+
+      <div class="tool-stage" id="toolStage">
+        <div class="tool-stage-header">
+          <h3 data-i18n="t_cartoon_t">Cartoonize</h3>
+          <div class="result-actions" id="resultActions" style="display:none">
+            <button class="btn btn-secondary btn-sm" id="btnReset" data-i18n="tc_reset">Reset</button>
+            <button class="btn btn-secondary btn-sm" id="btnClear" data-i18n="tc_clear">Clear</button>
+            <button class="btn btn-primary btn-sm" id="btnDownload" data-i18n="tc_download">Download</button>
+          </div>
+        </div>
+        <div class="tool-stage-body">
+          <div class="empty-state" id="emptyState">
+            <div class="es-icon">🎭</div>
+            <p data-i18n="tc_drop">Drop your image here or click to browse</p>
+            <p style="font-size:12px;color:var(--text-faint)" data-i18n="tc_supported">JPG · PNG · WebP · GIF · BMP</p>
+            <button class="btn btn-primary btn-sm" id="btnUpload" type="button" data-i18n="t_upload">رفع صورة</button>
+          </div>
+          <div class="ba-wrap hide" id="baWrap">
+            <canvas id="beforeCanvas"></canvas>
+            <div class="ba-clip" style="width:50%">
+              <canvas id="afterCanvas"></canvas>
+            </div>
+            <div class="ba-slider" style="left:50%"></div>
+            <div class="ba-handle">⇆</div>
+            <span class="ba-label ba-label-before" data-i18n="tc_original">Before</span>
+            <span class="ba-label ba-label-after" data-i18n="tc_result">After</span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hide">
+          <div class="drop-zone hide" id="dropZone" style="margin-top:16px">
+            <span class="dz-icon">📁</span>
+            <span data-i18n="tc_drop">Drop your image here or click to browse</span>
+          </div>
+          <div class="progress hide" id="progress" style="max-width:400px">
+            <div class="progress-bar"></div>
+            <div class="progress-text" id="progressText"></div>
+          </div>
+          <div id="infoBar" style="font-size:13px;color:var(--text-faint)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/main.js"></script>
+  <script src="../../js/tool-core.js"></script>
+  <script>
+  (function(){
+    var edgeEl=document.getElementById('edge'),edgeVal=document.getElementById('edgeVal');
+    var lvlEl=document.getElementById('levels'),lvlVal=document.getElementById('lvlVal');
+    var smEl=document.getElementById('smooth'),smVal=document.getElementById('smVal');
+    var applyBtn=document.getElementById('btnApply');
+    var edge=40,levels=6,smooth=3;
+    edgeEl.addEventListener('input',function(){edge=+edgeEl.value;edgeVal.textContent=edge;});
+    lvlEl.addEventListener('input',function(){levels=+lvlEl.value;lvlVal.textContent=levels;});
+    smEl.addEventListener('input',function(){smooth=+smEl.value;smVal.textContent=smooth;});
+    var tool=initTool({autoProcess:false,onProcess:function(){}});
+
+    function posterize(data,n){
+      var step=255/(n-1);
+      for(var i=0;i<data.length;i+=4){
+        data[i]=Math.round(data[i]/step)*step;
+        data[i+1]=Math.round(data[i+1]/step)*step;
+        data[i+2]=Math.round(data[i+2]/step)*step;
+      }
+    }
+    function sobelEdges(imgData,w,h,threshold){
+      var gray=new Float32Array(w*h);
+      var d=imgData.data;
+      for(var i=0;i<w*h;i++){
+        gray[i]=0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2];
+      }
+      var edges=new Uint8ClampedArray(w*h);
+      for(var y=1;y<h-1;y++){
+        for(var x=1;x<w-1;x++){
+          var gx=-gray[(y-1)*w+(x-1)]+gray[(y-1)*w+(x+1)]-2*gray[y*w+(x-1)]+2*gray[y*w+(x+1)]-gray[(y+1)*w+(x-1)]+gray[(y+1)*w+(x+1)];
+          var gy=-gray[(y-1)*w+(x-1)]-2*gray[(y-1)*w+x]-gray[(y-1)*w+(x+1)]+gray[(y+1)*w+(x-1)]+2*gray[(y+1)*w+x]+gray[(y+1)*w+(x+1)];
+          var mag=Math.sqrt(gx*gx+gy*gy);
+          edges[y*w+x]=mag>threshold?0:255;
+        }
+      }
+      return edges;
+    }
+
+    applyBtn.addEventListener('click',function(){
+      var orig=tool.getOriginal(); if(!orig)return;
+      var ac=tool.getAfterCanvas(),actx=ac.getContext('2d');
+      ac.width=orig.width; ac.height=orig.height;
+      actx.drawImage(orig,0,0);
+      var imgData=actx.getImageData(0,0,ac.width,ac.height);
+      var d=imgData.data;
+      // posterize colors
+      posterize(d,levels);
+      // sobel edges
+      var edges=sobelEdges(imgData,ac.width,ac.height,edge*2.5);
+      for(var i=0;i<edges.length;i++){
+        if(edges[i]===0){d[i*4]=d[i*4]*0.3;d[i*4+1]=d[i*4+1]*0.3;d[i*4+2]=d[i*4+2]*0.3;}
+      }
+      actx.putImageData(imgData,0,0);
+      // simple blur for smoothness
+      if(smooth>0){
+        for(var s=0;s<smooth;s++){
+          var tmp=actx.getImageData(0,0,ac.width,ac.height);
+          var td=tmp.data;
+          for(var y=1;y<ac.height-1;y++){
+            for(var x=1;x<ac.width-1;x++){
+              var idx=(y*ac.width+x)*4;
+              for(var c=0;c<3;c++){
+                d[idx+c]=Math.round((td[idx+c]+td[idx-4+c]+td[idx+4+c]+td[idx-ac.width*4+c]+td[idx+ac.width*4+c])/5);
+              }
+            }
+          }
+          actx.putImageData(imgData,0,0);
+        }
+      }
+      imgsfix.toast(imgsfix.t('tc_done'),'ok');
+    });
+  })();
+  </script>
+</body>
+</html>

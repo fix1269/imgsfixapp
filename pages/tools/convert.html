@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convert Image — imgsfix</title>
+  <meta name="description" content="Convert between JPG, PNG, and WebP formats with quality control. 100% local browser processing.">
+  <link rel="stylesheet" href="../../assets/cairo.css">
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">🔄 <span data-i18n="t_convert_t">Convert</span></span>
+      <h1 data-i18n="t_convert_t">Convert</h1>
+      <p data-i18n="t_convert_d">Switch between JPG, PNG, and WebP.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <a href="../../index.html#tools" data-i18n="nav_tools">Tools</a><span class="sep">/</span>
+        <span data-i18n="t_convert_t">Convert</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container tool-shell">
+      <aside class="tool-panel">
+        <div class="panel-section">
+          <h4 data-i18n="tc_convert_settings">Convert Settings</h4>
+          <div class="setting-row">
+            <label data-i18n="tc_format">Format</label>
+            <select id="formatEl" class="select-input">
+              <option value="image/jpeg" data-i18n="tc_jpeg">JPEG</option>
+              <option value="image/png" data-i18n="tc_png">PNG</option>
+              <option value="image/webp" data-i18n="tc_webp">WebP</option>
+            </select>
+          </div>
+          <div class="setting-row" id="qualityRow">
+            <label><span data-i18n="tc_quality">Quality:</span> <span id="qualVal">90</span>%</label>
+            <input type="range" id="quality" class="range-input" min="10" max="100" value="90">
+          </div>
+          <div id="resultInfo" style="display:none;font-size:13px;color:var(--text-muted);text-align:center;padding:8px 0"></div>
+          <button class="btn btn-primary btn-block" id="btnApply" style="margin-top:8px" data-i18n="tc_apply">Apply</button>
+        </div>
+      </aside>
+
+      <div class="tool-stage" id="toolStage">
+        <div class="tool-stage-header">
+          <h3 data-i18n="t_convert_t">Convert</h3>
+          <div class="result-actions" id="resultActions" style="display:none">
+            <button class="btn btn-primary btn-sm" id="btnDownload" data-i18n="tc_download">Download</button>
+            <button class="btn btn-secondary btn-sm" id="btnClear" data-i18n="tc_clear">Clear</button>
+            <button class="btn btn-secondary btn-sm" id="btnReset" data-i18n="tc_reset">Reset</button>
+          </div>
+        </div>
+        <div class="tool-stage-body">
+          <div class="empty-state" id="emptyState">
+            <div class="es-icon">🔄</div>
+            <p data-i18n="tc_drop">Drop your image here or click to browse</p>
+            <p style="font-size:12px;color:var(--text-faint)" data-i18n="tc_supported">JPG · PNG · WebP · GIF · BMP</p>
+            <button class="btn btn-primary btn-sm" id="btnUpload" data-i18n="t_upload">رفع صورة</button>
+          </div>
+          <div class="ba-wrap hide" id="baWrap">
+            <canvas id="beforeCanvas"></canvas>
+            <div class="ba-clip" style="width:50%">
+              <canvas id="afterCanvas"></canvas>
+            </div>
+            <div class="ba-slider" style="left:50%"></div>
+            <div class="ba-handle">⇆</div>
+            <span class="ba-label ba-label-before" data-i18n="tc_original">Before</span>
+            <span class="ba-label ba-label-after" data-i18n="tc_result">After</span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hide">
+          <div class="drop-zone hide" id="dropZone" style="margin-top:16px">
+            <span class="dz-icon">📁</span>
+            <span data-i18n="tc_drop">Drop your image here or click to browse</span>
+          </div>
+          <div class="progress hide" id="progress" style="max-width:400px">
+            <div class="progress-bar"></div>
+            <div class="progress-text" id="progressText"></div>
+          </div>
+          <div id="infoBar" style="font-size:13px;color:var(--text-faint)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/main.js"></script>
+  <script src="../../js/tool-core.js"></script>
+  <script>
+  (function(){
+    var formatEl=document.getElementById('formatEl');
+    var qualityEl=document.getElementById('quality');
+    var qualVal=document.getElementById('qualVal');
+    var qualityRow=document.getElementById('qualityRow');
+    var resultInfo=document.getElementById('resultInfo');
+    var applyBtn=document.getElementById('btnApply');
+    var btnUpload=document.getElementById('btnUpload');
+    var convertedBlobUrl=null;
+
+    function resetFields(){
+      formatEl.value='image/jpeg';
+      qualityEl.value=90;
+      qualVal.textContent=90;
+      qualityRow.style.display='';
+      resultInfo.style.display='none';
+      resultInfo.textContent='';
+      if(convertedBlobUrl){URL.revokeObjectURL(convertedBlobUrl);convertedBlobUrl=null;}
+    }
+
+    var tool=initTool({
+      autoProcess:false,
+      onReset:function(){resetFields();},
+      onClear:function(){resetFields();}
+    });
+
+    /* format change hides qualityRow for PNG */
+    formatEl.addEventListener('change',function(){
+      if(formatEl.value==='image/png'){
+        qualityRow.style.display='none';
+      }else{
+        qualityRow.style.display='';
+      }
+    });
+
+    qualityEl.addEventListener('input',function(){qualVal.textContent=qualityEl.value;});
+
+    if(btnUpload)btnUpload.addEventListener('click',function(){
+      document.getElementById('fileInput').click();
+    });
+
+    function formatSize(bytes){
+      if(bytes<1024)return bytes+'B';
+      if(bytes<1048576)return(bytes/1024).toFixed(1)+'KB';
+      return(bytes/1048576).toFixed(2)+'MB';
+    }
+
+    /* apply conversion */
+    applyBtn.addEventListener('click',function(){
+      var orig=tool.getOriginal(); if(!orig)return;
+      var ac=tool.getAfterCanvas(),actx=ac.getContext('2d');
+      ac.width=orig.width; ac.height=orig.height;
+      actx.clearRect(0,0,ac.width,ac.height);
+      actx.drawImage(orig,0,0);
+      var fmt=formatEl.value;
+      var q=+qualityEl.value/100;
+      ac.toBlob(function(blob){
+        if(!blob){imgsfix.toast('Conversion failed','err');return;}
+        if(convertedBlobUrl)URL.revokeObjectURL(convertedBlobUrl);
+        convertedBlobUrl=URL.createObjectURL(blob);
+        var ext=fmt==='image/jpeg'?'jpg':fmt==='image/png'?'png':'webp';
+        var name=fmt.split('/')[1].toUpperCase();
+        resultInfo.style.display='block';
+        resultInfo.textContent=name+' · '+formatSize(blob.size);
+        imgsfix.toast(imgsfix.t('tc_done'),'ok');
+      },fmt,q);
+    });
+
+    /* download override via cloneNode — removes tool-core's toDataURL listener */
+    var origDlBtn=document.getElementById('btnDownload');
+    var newDlBtn=origDlBtn.cloneNode(true);
+    origDlBtn.parentNode.replaceChild(newDlBtn,origDlBtn);
+    newDlBtn.addEventListener('click',function(){
+      if(!convertedBlobUrl){imgsfix.toast('Apply conversion first','err');return;}
+      var ext=formatEl.value==='image/jpeg'?'jpg':formatEl.value==='image/png'?'png':'webp';
+      var a=document.createElement('a');
+      a.href=convertedBlobUrl;
+      a.download='converted_imgsfix.'+ext;
+      a.click();
+      imgsfix.toast(imgsfix.t('tc_done'),'ok');
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Frequently Asked Questions | imgsfix</title>
+  <meta name="description" content="Answers to common questions about imgsfix: what it is, whether it is free, privacy and data handling, supported formats and browsers, offline use, the editor, and more.">
+  <link rel="stylesheet" href="../assets/cairo.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">❓ <span data-i18n="page_faq">FAQ</span></span>
+      <h1 data-i18n="page_faq">FAQ</h1>
+      <p data-i18n="faq_intro">Frequently asked questions about imgsfix — how it works, privacy, supported formats, and more.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <span data-i18n="page_faq">FAQ</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div style="max-width:760px;margin-inline:auto">
+        <div style="text-align:center;margin-bottom:32px">
+          <span class="privacy-note">🔒 <span data-i18n="hero_badge">100% Client-Side · No Uploads · Private</span></span>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q1">What is imgsfix?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a1">imgsfix is a free, privacy-focused image toolkit that runs entirely in your web browser. It offers eight image tools (compress, resize, convert, crop, remove background, cartoonize, enhance, and filters), a QR &amp; barcode reader, and a full-featured advanced editor. Every operation is performed locally on your device using HTML5 Canvas and JavaScript — no file is ever uploaded to a server.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q2">Is imgsfix really free?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a2">Yes, completely. There are no subscriptions, no premium tiers, no trial periods, no usage limits, and no watermarks on your output. You do not need to create an account or provide any personal information. imgsfix is free for everyone — individuals, students, freelancers, and businesses — and we intend to keep it that way.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q3">Do you upload my images to a server?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a3">No. imgsfix has no server backend for processing images. When you select or drop a file, it is loaded directly into your browser's memory using the File API and processed on an HTML5 canvas element. The pixels are manipulated by JavaScript running on your device. When you download the result, the file is generated locally from the canvas. Your image never travels over the internet at any point.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q4">What image formats are supported?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a4">imgsfix works with the most common web image formats: JPG (JPEG), PNG, and WebP. The convert tool lets you switch between these three formats. Most tools also accept GIF and BMP as input. The advanced editor exports to PNG. Support for a specific format depends on your browser's built-in image decoding capabilities, but all modern browsers handle JPG, PNG, and WebP natively.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q5">Does imgsfix work offline?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a5">Once the page is loaded, most tools continue to work even if your internet connection drops, because all processing happens locally. The image tools, enhance, and filters do not need a network connection after initial load. The QR reader's camera mode and the advanced editor also work offline. The only external resource is the Google Fonts stylesheet, which is loaded once for typography — if it is unavailable, the site falls back to system fonts.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q6">What browsers are supported?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a6">imgsfix works in all modern browsers that support the HTML5 Canvas API and modern JavaScript. This includes the latest versions of Chrome, Edge, Firefox, Safari, and Brave on desktop, as well as Chrome and Safari on mobile. The QR reader's camera scanning uses the native BarcodeDetector API, which is currently available in Chrome and Edge on desktop and Chrome on Android. On browsers without the BarcodeDetector API, you can still scan QR codes from image files.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q7">How does the advanced editor work?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a7">The advanced editor is built on Fabric.js, a lightweight JavaScript canvas library. It provides a full editing environment with drawing tools (select, brush, text, rectangle, circle, triangle, line, arrow), object manipulation (move, resize, rotate, duplicate, delete), layer ordering, a property panel for fill and opacity, preset canvas sizes for social media, undo/redo with keyboard shortcuts, and the ability to save and load projects. Everything renders on a canvas in your browser — no server interaction is involved at any point.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q8">Is my data safe with imgsfix?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a8">Yes. Because all processing happens in your browser and no data is transmitted to any server, your images and edits are never stored anywhere outside your device. We do not use analytics, advertising trackers, or third-party data collection. The only thing stored locally is your theme and language preference in your browser's localStorage. You can clear this at any time from your browser settings. For the full details, see our Privacy Policy and Cookie Policy.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q9">Can I use imgsfix for commercial purposes?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a9">Yes. imgsfix is free to use for both personal and commercial projects. There are no licensing restrictions on the images you produce — the output is yours. You can use compressed, resized, converted, cropped, or edited images in your business materials, websites, social media, client work, or any other context. We do not add watermarks or claim any rights to your content. Please review our Terms of Use for the complete usage terms.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" type="button" data-i18n="faq_q10">What languages are supported?</button>
+          <div class="faq-a">
+            <div class="inner">
+              <p data-i18n="faq_a10">imgsfix currently supports two languages: English and Arabic. You can switch between them at any time using the language toggle in the header. When Arabic is selected, the entire interface switches to a right-to-left (RTL) layout for a natural reading experience. Your language preference is saved in your browser's localStorage so it persists across visits.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:var(--s-6)">
+          <p style="color:var(--text-muted)" data-i18n="faq_not_found">Did not find what you were looking for?</p>
+          <a class="btn btn-primary" href="contact.html" data-i18n="faq_contact">Contact Us</a>
+          <span style="margin:0 8px"></span>
+          <a class="btn btn-secondary" href="services.html" data-i18n="faq_view_services">View Services</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
