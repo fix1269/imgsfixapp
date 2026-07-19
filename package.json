@@ -1,0 +1,20 @@
+{
+  "name": "imgsfix",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.2"
+  },
+  "dependencies": {
+    "browser-image-compression": "^2.0.2",
+    "html5-qrcode": "^2.3.8",
+    "cropperjs": "^2.0.0",
+    "@imgly/background-removal": "^1.5.0"
+  }
+}
