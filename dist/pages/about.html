@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About imgsfix — Privacy-First Client-Side Image Tools</title>
+  <meta name="description" content="Learn about imgsfix: a privacy-focused, 100% client-side image toolkit. No uploads, no servers, no tracking. Built with HTML5 Canvas and vanilla JavaScript.">
+  <link rel="stylesheet" crossorigin href="../assets/cairo-B92PAyp8.css">
+  <link rel="stylesheet" crossorigin href="../assets/main-CScObT-4.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">ℹ️ <span data-i18n="page_about">About</span></span>
+      <h1 data-i18n="page_about">About</h1>
+      <p data-i18n="about_intro">imgsfix is a privacy-focused image toolkit that runs entirely in your browser — no uploads, no servers, no tracking.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <span data-i18n="page_about">About</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="prose">
+        <div style="text-align:center;margin-bottom:32px">
+          <span class="privacy-note">🔒 <span data-i18n="hero_badge">100% Client-Side · No Uploads · Private</span></span>
+        </div>
+
+        <h2 data-i18n="about_mission">Our Mission</h2>
+        <p data-i18n="about_mission_p1">imgsfix exists for one simple reason: you should be able to fix, transform, and edit your images without surrendering them to a stranger's server. Every day, millions of people upload personal photos, business documents, and sensitive visuals to online tools that quietly copy, store, and sometimes analyze them. We built imgsfix to break that pattern.</p>
+        <p data-i18n="about_mission_p2">Our mission is to provide a complete, professional-grade image toolkit that never sends a single byte of your files anywhere. Everything — compression, resizing, format conversion, cropping, background removal, cartoonization, enhancement, filters, QR scanning, and full canvas editing — happens right inside your browser, on your own device, using processing power you already have.</p>
+        <p data-i18n="about_mission_p3">We believe privacy is not a premium feature or a marketing slogan. It is the baseline. A tool that respects your data should not need to promise it won't misuse it — it should simply never collect it in the first place. That is the standard imgsfix is built to.</p>
+
+        <h2 data-i18n="about_how">How It Works</h2>
+        <p data-i18n="about_how_p1">When you open a tool on imgsfix and select an image, that file is read directly into your browser's memory using the File API. It is then drawn onto an HTML5 <code>&lt;canvas&gt;</code> element, where JavaScript manipulates the pixels in real time. When you are happy with the result, the canvas is exported back into a downloadable image file — again, entirely on your device.</p>
+        <p data-i18n="about_how_p2">At no point in this process does your image travel over the internet. There is no upload step, no temporary server storage, no background processing queue, and no log of what you edited. If you close the tab, the image is gone from memory. The only copy that ever exists is the one you downloaded.</p>
+        <p data-i18n="about_how_p3">This architecture is sometimes called "client-side" or "zero-knowledge" processing. It means we literally cannot see your files — not because we choose not to look, but because they are never sent to us in the first place.</p>
+
+        <h2 data-i18n="about_team">Our Team Philosophy</h2>
+        <p data-i18n="about_team_p1">imgsfix is built by developers who were tired of the trade-off between convenience and privacy. We saw powerful online image editors that demanded account creation, tracked usage patterns, and stored user files indefinitely — and we asked a simple question: why? Modern browsers are more than capable of handling image processing locally. The server round-trip is unnecessary, and so is the privacy cost that comes with it.</p>
+        <p data-i18n="about_team_p2">Our philosophy can be summed up in three principles:</p>
+        <ul>
+          <li data-i18n="about_team_l1"><strong>Privacy by architecture, not by promise.</strong> We don't rely on policies to protect your data — we rely on the fact that we never receive it.</li>
+          <li data-i18n="about_team_l2"><strong>Free access for everyone.</strong> Useful tools should not be locked behind paywalls, trials, or sign-up walls. imgsfix is free to use, today and always.</li>
+          <li data-i18n="about_team_l3"><strong>Open and transparent.</strong> The logic that processes your images runs in your browser where you can inspect it. No black boxes, no hidden behavior.</li>
+        </ul>
+
+        <h2 data-i18n="about_tech">Technology We Use</h2>
+        <p data-i18n="about_tech_p1">imgsfix is deliberately built on web standards rather than heavy frameworks. This keeps the site fast, lightweight, and easy to audit. The core technologies include:</p>
+        <ul>
+          <li data-i18n="about_tech_l1"><strong>HTML5 Canvas API</strong> — the foundation for all image manipulation. Every tool draws your image onto a canvas and reads or modifies the pixel data directly.</li>
+          <li data-i18n="about_tech_l2"><strong>Vanilla JavaScript</strong> — no build step, no transpiler, no framework runtime. The code that runs is the code you can read.</li>
+          <li data-i18n="about_tech_l3"><strong>File API &amp; FileReader</strong> — lets your browser read selected or dropped files into memory without uploading them.</li>
+          <li data-i18n="about_tech_l4"><strong>BarcodeDetector API</strong> — a native browser API used by the QR &amp; barcode reader for fast, local scanning.</li>
+          <li data-i18n="about_tech_l5"><strong>Fabric.js</strong> — a lightweight canvas library powering the advanced editor's shapes, text, layers, and object manipulation.</li>
+          <li data-i18n="about_tech_l6"><strong>localStorage</strong> — used only to remember your theme (light/dark) and language (English/Arabic) preferences. No other data is stored.</li>
+        </ul>
+        <p data-i18n="about_tech_p2">We deliberately avoid analytics scripts, advertising trackers, and third-party processing services. The only external resource loaded is the Cairo font from Google Fonts, which is used for typography.</p>
+
+        <h2 data-i18n="about_free">Our Commitment to Free Access</h2>
+        <p data-i18n="about_free_p1">imgsfix is free to use for everyone — individuals, students, freelancers, small businesses, and enterprises alike. There are no subscriptions, no premium tiers, no usage limits, and no watermarks added to your output. You do not need to create an account, provide an email address, or identify yourself in any way.</p>
+        <p data-i18n="about_free_p2">We intend to keep it this way. The tools you see today will remain free, and new tools we add in the future will be free as well. We believe that privacy-respecting software should be accessible to everyone, not just those who can afford to pay for it.</p>
+        <p data-i18n="about_free_p3">If you find imgsfix useful, the best way to support us is simply to share it with others who care about their privacy. Word of mouth is how a tool like this grows — no ad campaigns, no tracking pixels, just people telling people.</p>
+
+        <h2 data-i18n="about_values">Our Privacy Values</h2>
+        <p data-i18n="about_values_p1">Privacy is not a feature we added — it is the reason imgsfix exists. These are the values that guide every decision we make:</p>
+        <ul>
+          <li data-i18n="about_values_l1"><strong>No data collection.</strong> We do not collect, store, or transmit your images, your editing choices, or your personal information. There is no database of user activity because there is no server receiving it.</li>
+          <li data-i18n="about_values_l2"><strong>No tracking.</strong> We do not use analytics, advertising pixels, fingerprinting scripts, or any technology that follows you across the web.</li>
+          <li data-i18n="about_values_l3"><strong>No cookies.</strong> We do not set tracking cookies. The only local storage we use is for your theme and language preferences, which live on your device and never leave it.</li>
+          <li data-i18n="about_values_l4"><strong>No accounts.</strong> You never need to sign up or log in. Your identity is your own business, and your images are your own property.</li>
+          <li data-i18n="about_values_l5"><strong>Offline-friendly.</strong> Because processing happens locally, many tools continue to work even if your connection drops mid-session.</li>
+          <li data-i18n="about_values_l6"><strong>Your data, your control.</strong> You can clear your preferences at any time from your browser. There is nothing to "delete from our servers" because we never had it.</li>
+        </ul>
+        <p data-i18n="about_values_p2">We invite you to read our full Privacy Policy and Cookie Policy for the complete picture. If you have questions, our FAQ covers the most common ones, and you can always reach out directly.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

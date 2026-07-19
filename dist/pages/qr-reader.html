@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR & Barcode Reader — imgsfix</title>
+  <meta name="description" content="Scan QR codes and barcodes from your camera or image files. 100% client-side, no uploads. Supports multiple barcode formats.">
+  <script type="module" crossorigin src="../assets/qr-BqbOnFRj.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/modulepreload-polyfill-B5Qt9EMX-ulV_1b7r.js">
+  <link rel="stylesheet" crossorigin href="../assets/cairo-B92PAyp8.css">
+  <link rel="stylesheet" crossorigin href="../assets/main-CScObT-4.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">📷 <span data-i18n="nav_qr">QR Reader</span></span>
+      <h1 data-i18n="nav_qr">QR Reader</h1>
+      <p data-i18n="qr_scan_desc">Scan QR codes and barcodes from your camera or image files — all locally in your browser.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <span data-i18n="nav_qr">QR Reader</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container" style="max-width:680px">
+      <div style="text-align:center;margin-bottom:24px">
+        <span class="privacy-note">🔒 <span data-i18n="hero_badge">100% Client-Side · No Uploads · Private</span></span>
+      </div>
+
+      <!-- mode switch -->
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px">
+        <button class="tool-btn active" id="modeCamera" data-i18n="qr_camera">📷 Camera</button>
+        <button class="tool-btn" id="modeImage" data-i18n="qr_image_file">🖼 Image File</button>
+      </div>
+
+      <!-- camera panel -->
+      <div id="cameraPanel" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+        <div class="fallback-msg hide" id="fallbackMsg" style="width:100%;padding:16px;border-radius:14px;background:rgba(245,158,11,.12);border:1px solid var(--c-warning-500);color:var(--c-warning-600);font-size:14px"></div>
+        <div id="qrReader" style="width:100%;max-width:480px"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center">
+          <select id="deviceSelect" class="select-input" style="width:auto"></select>
+          <button class="btn btn-primary btn-sm" id="btnStartCam" data-i18n="qr_start_cam">Start Camera</button>
+          <button class="btn btn-secondary btn-sm" id="btnStopCam" disabled data-i18n="qr_stop">Stop</button>
+        </div>
+      </div>
+
+      <!-- image panel -->
+      <div id="imagePanel" class="hide" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+        <div class="drop-zone" id="scanImageDrop" style="width:100%;max-width:480px">
+          <span class="dz-icon">📁</span>
+          <span data-i18n="qr_drop">Drop an image with a QR/barcode or click to browse</span>
+        </div>
+        <input type="file" id="scanImageInput" accept="image/*" class="hide">
+        <img id="scanImagePreview" class="hide" style="max-width:400px;border-radius:14px;border:1px solid var(--border-soft)">
+      </div>
+
+      <!-- result -->
+      <div class="result-box hide" id="resultBox" style="margin-top:24px">
+        <div class="result-label" data-i18n="qr_detected">Detected: <span id="resultFormat">QR</span></div>
+        <div class="result-value" id="resultValue"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" id="btnCopyResult" data-i18n="qr_copy">Copy</button>
+          <button class="btn btn-secondary btn-sm" id="btnOpenResult" data-i18n="qr_open_url">Open URL</button>
+          <button class="btn btn-secondary btn-sm" id="btnClearResult" data-i18n="qr_clear">Clear</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

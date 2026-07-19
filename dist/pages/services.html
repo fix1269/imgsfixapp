@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — imgsfix Image Tools, QR Reader &amp; Editor</title>
+  <meta name="description" content="Explore the three pillars of imgsfix: eight client-side image tools, a QR & barcode reader, and a full-featured advanced editor. All free, private, and in-browser.">
+  <link rel="stylesheet" crossorigin href="../assets/cairo-B92PAyp8.css">
+  <link rel="stylesheet" crossorigin href="../assets/main-CScObT-4.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">🧰 <span data-i18n="page_services">Services</span></span>
+      <h1 data-i18n="page_services">Services</h1>
+      <p data-i18n="services_intro">Three pillars of free, privacy-focused image processing — all running 100% in your browser.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <span data-i18n="page_services">Services</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="prose">
+        <div style="text-align:center;margin-bottom:32px">
+          <span class="privacy-note">🔒 <span data-i18n="hero_badge">100% Client-Side · No Uploads · Private</span></span>
+        </div>
+
+        <p data-i18n="services_p1">imgsfix is organized around three complementary pillars. Together they cover the full range of everyday image tasks — from a quick resize to a multi-layer design — without ever requiring you to upload a file or create an account. Below is a detailed look at each pillar and the tools within it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillar 1: Image Tools -->
+  <section class="section-sm" style="background:var(--bg-subtle)">
+    <div class="container">
+      <div class="prose">
+        <h2 data-i18n="svc_tools_title">🔧 Image Tools</h2>
+        <p data-i18n="svc_tools_p1">Our flagship pillar is a collection of eight focused, single-purpose utilities. Each tool does one thing exceptionally well, with a clean interface and real-time preview. Pick the tool that matches your task, drop in your image, adjust the settings, and download the result. No learning curve, no clutter, no uploads.</p>
+
+        <ul>
+          <li data-i18n="svc_tools_l1"><strong><a href="tools/compress.html">Compress</a></strong> — Reduce the file size of JPG, PNG, and WebP images while keeping visual quality. Adjustable quality slider with a live before/after comparison so you can find the sweet spot between size and clarity.</li>
+          <li data-i18n="svc_tools_l2"><strong><a href="tools/resize.html">Resize</a></strong> — Change image dimensions to any width and height. Maintain aspect ratio with a single toggle, or set exact pixel dimensions for specific requirements like social media posts or email headers.</li>
+          <li data-i18n="svc_tools_l3"><strong><a href="tools/convert.html">Convert</a></strong> — Switch between JPG, PNG, and WebP formats instantly. Useful when a platform requires a specific format or when you need a transparent PNG from a JPG source.</li>
+          <li data-i18n="svc_tools_l4"><strong><a href="tools/crop.html">Crop</a></strong> — Trim and frame your image precisely with an interactive crop region. Drag to define the area, lock to common aspect ratios, and export only the part you need.</li>
+          <li data-i18n="svc_tools_l5"><strong><a href="tools/remove-bg.html">Remove Background</a></strong> — Erase image backgrounds using color sampling. Click on the background color to remove it, adjust the tolerance for edge precision, and get a clean cutout without manual masking.</li>
+          <li data-i18n="svc_tools_l6"><strong><a href="tools/cartoon.html">Cartoonize</a></strong> — Turn photos into cartoon-style artwork. The tool applies edge detection and color quantization locally to produce a stylized, illustrated look from any photograph.</li>
+          <li data-i18n="svc_tools_l7"><strong><a href="tools/enhance.html">Enhance</a></strong> — Adjust brightness, contrast, and sharpness with intuitive sliders. Rescue underexposed shots, punch up flat images, and bring out detail — all processed in real time on your device.</li>
+          <li data-i18n="svc_tools_l8"><strong><a href="tools/filters.html">Filters</a></strong> — Apply stylized filters with adjustable intensity. Choose from grayscale, sepia, vintage, cool, warm, and more, then fine-tune how strongly the effect is applied before downloading.</li>
+        </ul>
+
+        <p data-i18n="svc_tools_p2">Every tool above shares the same foundation: your image is loaded into browser memory, processed on an HTML5 canvas, and exported locally. The file never leaves your device at any point in the workflow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillar 2: QR & Barcode Reader -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="prose">
+        <h2 data-i18n="svc_qr_title">📷 QR &amp; Barcode Reader</h2>
+        <p data-i18n="svc_qr_p1">The second pillar is a fast, fully local QR code and barcode scanner. It supports two modes: live camera scanning and image file scanning. In camera mode, it uses your device's camera and the native <code>BarcodeDetector</code> API to detect codes in real time — point your camera at a QR code and the content appears instantly. In image mode, you can load any image file containing a QR or barcode and the reader will extract the encoded data.</p>
+        <p data-i18n="svc_qr_p2">Supported formats include QR codes, EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, and other common barcode symbologies, depending on your browser's capabilities. Detected results can be copied to the clipboard or, if the content is a URL, opened directly in a new tab.</p>
+        <p data-i18n="svc_qr_p3">Just like the image tools, the QR reader processes everything on your device. Camera frames are analyzed locally and never streamed to a server. Image files you scan stay in your browser.</p>
+        <p><a class="btn btn-primary btn-sm" href="qr-reader.html" data-i18n="svc_qr_open">Open QR Reader</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillar 3: Advanced Editor -->
+  <section class="section-sm" style="background:var(--bg-subtle)">
+    <div class="container">
+      <div class="prose">
+        <h2 data-i18n="svc_editor_title">🎨 Advanced Editor</h2>
+        <p data-i18n="svc_editor_p1">The third pillar is a full-featured canvas editor for when a single-pass tool is not enough. Built on Fabric.js, it provides a professional editing environment with the features you would expect from desktop software — all running in your browser with zero uploads.</p>
+
+        <h3 data-i18n="svc_editor_key">Key Capabilities</h3>
+        <ul>
+          <li data-i18n="svc_editor_l1"><strong>Drawing tools</strong> — Select, freehand brush, text, rectangle, circle, triangle, line, and arrow.</li>
+          <li data-i18n="svc_editor_l2"><strong>Object manipulation</strong> — Move, resize, rotate, duplicate, and delete any object on the canvas.</li>
+          <li data-i18n="svc_editor_l3"><strong>Layer management</strong> — Bring forward, send backward, bring to front, and send to back for precise stacking order.</li>
+          <li data-i18n="svc_editor_l4"><strong>Text controls</strong> — Editable text objects with font size, bold, italic, underline, and alignment options.</li>
+          <li data-i18n="svc_editor_l5"><strong>Property panel</strong> — Adjust fill color, opacity, and rotation for any selected object.</li>
+          <li data-i18n="svc_editor_l6"><strong>Preset canvas sizes</strong> — Start from Instagram post (1080×1080), Instagram story (1080×1920), YouTube thumbnail (1280×720), Facebook post (1200×630), or a custom size.</li>
+          <li data-i18n="svc_editor_l7"><strong>Undo &amp; redo</strong> — Full history navigation with keyboard shortcuts (Ctrl+Z / Ctrl+Y).</li>
+          <li data-i18n="svc_editor_l8"><strong>Project saving</strong> — Save your work as a project file and load it later to continue editing.</li>
+          <li data-i18n="svc_editor_l9"><strong>PNG export</strong> — Download your finished composition as a high-quality PNG.</li>
+        </ul>
+
+        <p data-i18n="svc_editor_p2">The editor is ideal for creating social media graphics, thumbnails, simple designs, annotations, and collages — all without installing software or surrendering your content to a cloud service.</p>
+        <p><a class="btn btn-primary btn-sm" href="advanced-editor.html" data-i18n="svc_editor_open">Open Advanced Editor</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="prose">
+        <h2 data-i18n="svc_tie_title">What Ties Them Together</h2>
+        <p data-i18n="svc_tie_p1">All three pillars share the same commitments: no uploads, no servers, no accounts, no tracking, and no cost. Whether you are compressing a single photo, scanning a QR code at a conference, or designing a multi-layer graphic, your data stays on your device from start to finish.</p>
+        <p data-i18n="svc_tie_p2">Ready to get started? Browse the image tools, try the QR reader, or launch the advanced editor. If you have questions, our FAQ has answers, and you are always welcome to contact us.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resize Image — imgsfix</title>
+  <meta name="description" content="Resize your image to any dimensions with high-quality smoothing. 100% local browser processing.">
+  <link rel="stylesheet" crossorigin href="../../assets/cairo-B92PAyp8.css">
+  <link rel="stylesheet" crossorigin href="../../assets/main-CScObT-4.css">
+</head>
+<body>
+  <section class="page-head">
+    <div class="container">
+      <span class="badge">📐 <span data-i18n="t_resize_t">Resize</span></span>
+      <h1 data-i18n="t_resize_t">Resize</h1>
+      <p data-i18n="t_resize_d">Change image dimensions to any size.</p>
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="../../index.html" data-i18n="bc_home">Home</a><span class="sep">/</span>
+        <a href="../../index.html#tools" data-i18n="nav_tools">Tools</a><span class="sep">/</span>
+        <span data-i18n="t_resize_t">Resize</span>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container tool-shell">
+      <aside class="tool-panel">
+        <div class="panel-section">
+          <h4 data-i18n="tc_resize_settings">Resize Settings</h4>
+          <div class="setting-row">
+            <label data-i18n="tc_width_px">Width (px)</label>
+            <input type="number" id="widthEl" class="num-input" min="1" value="0">
+          </div>
+          <div class="setting-row">
+            <label data-i18n="tc_height_px">Height (px)</label>
+            <input type="number" id="heightEl" class="num-input" min="1" value="0">
+          </div>
+          <div class="setting-row">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" id="lockAr" checked>
+              <span data-i18n="tc_lock_ar">Lock aspect ratio</span>
+            </label>
+          </div>
+          <button class="btn btn-primary btn-block" id="btnApply" style="margin-top:8px" data-i18n="tc_apply">Apply</button>
+        </div>
+      </aside>
+
+      <div class="tool-stage" id="toolStage">
+        <div class="tool-stage-header">
+          <h3 data-i18n="t_resize_t">Resize</h3>
+          <div class="result-actions" id="resultActions" style="display:none">
+            <button class="btn btn-primary btn-sm" id="btnDownload" data-i18n="tc_download">Download</button>
+            <button class="btn btn-secondary btn-sm" id="btnClear" data-i18n="tc_clear">Clear</button>
+            <button class="btn btn-secondary btn-sm" id="btnReset" data-i18n="tc_reset">Reset</button>
+          </div>
+        </div>
+        <div class="tool-stage-body">
+          <div class="empty-state" id="emptyState">
+            <div class="es-icon">📐</div>
+            <p data-i18n="tc_drop">Drop your image here or click to browse</p>
+            <p style="font-size:12px;color:var(--text-faint)" data-i18n="tc_supported">JPG · PNG · WebP · GIF · BMP</p>
+            <button class="btn btn-primary btn-sm" id="btnUpload" data-i18n="t_upload">رفع صورة</button>
+          </div>
+          <div class="ba-wrap hide" id="baWrap">
+            <canvas id="beforeCanvas"></canvas>
+            <div class="ba-clip" style="width:50%">
+              <canvas id="afterCanvas"></canvas>
+            </div>
+            <div class="ba-slider" style="left:50%"></div>
+            <div class="ba-handle">⇆</div>
+            <span class="ba-label ba-label-before" data-i18n="tc_original">Before</span>
+            <span class="ba-label ba-label-after" data-i18n="tc_result">After</span>
+          </div>
+          <input type="file" id="fileInput" accept="image/*" class="hide">
+          <div class="drop-zone hide" id="dropZone" style="margin-top:16px">
+            <span class="dz-icon">📁</span>
+            <span data-i18n="tc_drop">Drop your image here or click to browse</span>
+          </div>
+          <div class="progress hide" id="progress" style="max-width:400px">
+            <div class="progress-bar"></div>
+            <div class="progress-text" id="progressText"></div>
+          </div>
+          <div id="infoBar" style="font-size:13px;color:var(--text-faint)"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/main.js"></script>
+  <script src="../../js/tool-core.js"></script>
+  <script>
+  (function(){
+    var widthEl=document.getElementById('widthEl');
+    var heightEl=document.getElementById('heightEl');
+    var lockAr=document.getElementById('lockAr');
+    var applyBtn=document.getElementById('btnApply');
+    var btnUpload=document.getElementById('btnUpload');
+    var aspectRatio=1;
+
+    function resetFields(){
+      var orig=tool.getOriginal();
+      if(orig){
+        widthEl.value=orig.width;
+        heightEl.value=orig.height;
+        aspectRatio=orig.width/orig.height;
+      }else{
+        widthEl.value=0;
+        heightEl.value=0;
+      }
+    }
+
+    var tool=initTool({
+      autoProcess:false,
+      onImage:function(img){
+        widthEl.value=img.width;
+        heightEl.value=img.height;
+        aspectRatio=img.width/img.height;
+      },
+      onReset:function(){
+        resetFields();
+      },
+      onClear:function(){
+        widthEl.value=0;
+        heightEl.value=0;
+        lockAr.checked=true;
+        aspectRatio=1;
+      }
+    });
+
+    /* aspect ratio lock listeners */
+    widthEl.addEventListener('input',function(){
+      if(lockAr.checked&&aspectRatio){
+        heightEl.value=Math.round(+widthEl.value/aspectRatio);
+      }
+    });
+    heightEl.addEventListener('input',function(){
+      if(lockAr.checked&&aspectRatio){
+        widthEl.value=Math.round(+heightEl.value*aspectRatio);
+      }
+    });
+
+    /* upload button */
+    if(btnUpload)btnUpload.addEventListener('click',function(){
+      document.getElementById('fileInput').click();
+    });
+
+    /* apply resize */
+    applyBtn.addEventListener('click',function(){
+      var orig=tool.getOriginal(); if(!orig)return;
+      var w=+widthEl.value,h=+heightEl.value;
+      if(!w||!h){imgsfix.toast('Enter valid dimensions','err');return;}
+      var ac=tool.getAfterCanvas(),actx=ac.getContext('2d');
+      ac.width=w; ac.height=h;
+      actx.imageSmoothingEnabled=true;
+      actx.imageSmoothingQuality='high';
+      actx.clearRect(0,0,w,h);
+      actx.drawImage(orig,0,0,w,h);
+      imgsfix.toast(imgsfix.t('tc_done'),'ok');
+    });
+  })();
+  </script>
+</body>
+</html>
